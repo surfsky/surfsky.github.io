@@ -1,0 +1,87 @@
+# MapTiler
+
+Map tile images builder for baidu map, tencent map, google map, ...
+
+https://github.com/surfsky/MapTiler.git
+
+# Tasks
+
+- [x] Baidu map
+- [x] Tencent map
+- [ ] Google map
+- [ ] Gaode map
+- [ ] Bing map
+
+# Snap
+
+![](https://github.com/surfsky/MapTiler/raw/master/Doc/01.png)
+![](https://github.com/surfsky/MapTiler/raw/master/Doc/02.png)
+![](https://github.com/surfsky/MapTiler/raw/master/Doc/03.png)
+![](https://github.com/surfsky/MapTiler/raw/master/Doc/baidu.png)
+![](https://github.com/surfsky/MapTiler/raw/master/Doc/tencent.png)
+
+
+# Ref
+
+- https://github.com/jiazheng/BaiduMapTileCutter
+- http://www.jiazhengblog.com/blog/2011/10/08/422/
+
+
+# Map
+
+
+BaiduMap
+
+- [demo](http://lbsyun.baidu.com/jsdemo.htm#c1_10)
+- [tutori](http://lbsyun.baidu.com/index.php?title=jspopular3.0/guide/geocoding)
+- [api](http://lbsyun.baidu.com/cms/jsapi/reference/jsapi_reference_3_0.html#a7b0)
+- [lib](http://lbsyun.baidu.com/index.php?title=jspopular/openlibrary)
+QQMap(TencentMap)
+
+- [demo](https://lbs.qq.com/webDemoCenter/javascriptV2/libraries/drawingLibrary)
+- [tutori](https://lbs.qq.com/webApi/javascriptV2/jsGuide/jsOverview)
+- [api](https://lbs.qq.com/webApi/javascriptV2/jsDoc/jsDocIndex)
+- [webservice api](https://lbs.qq.com/service/webService/webServiceGuide/webServiceOverview)
+
+
+# Map tile
+
+> https://blog.csdn.net/u013929284/article/details/53614281
+> http://cntchen.github.io/2016/05/09/国内主要地图瓦片坐标系定义及计算原理/
+
+各地图查询接口示例
+
+- 高德地图
+
+    http://wprd03.is.autonavi.com/appmaptile?style=7&x=26705&y=14226&z=15
+
+- 百度地图
+    
+    http://online1.map.bdimg.com/onlinelabel/qt=tile&x=6163&y=1280&z=15
+
+- 谷歌地图
+
+    http://mt2.google.cn/vt/lyrs=m@167000000&hl=zh-CN&gl=cn&x=26705&y=14226&z=15&s=Galil
+
+- 腾讯地图
+
+    http://rt1.map.gtimg.com/tile?z=15&x=26705&y=18541&styleid=1&version=117
+
+- 必应地图
+
+    http://dynamic.t2.tiles.ditu.live.com/comp/ch/132122221030021?it=G,OS,L&mkt=en-us&cstl=w4c&ur=cn
+
+
+# Data for Bibiden Palace
+
+baidu
+
+    116.398, 39.9295
+    116.409, 39.9193
+
+tencent
+
+    116.39147686767578, 39.92318118446173
+    116.40299185180666, 39.91298024307851
+
+
