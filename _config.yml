@@ -1,3 +1,5 @@
+title: Surfsky's Blog
+description: Blogs in GitHub Pages.
 theme: jekyll-theme-architect
 author : surfsky
 name : surfsky
@@ -5,3 +7,4 @@ email : surfsky@sina.com
 github : surfsky@sina.com
 twitter : username
 feedburner : feedname
+
