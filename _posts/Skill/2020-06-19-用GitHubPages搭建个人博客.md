@@ -1,7 +1,9 @@
 ---
 author: SURFSKY
+title: 用 GitHub Pages 创建个人博客
 ---
-# 用 GitHub Pages 创建个人博客
+
+此文档描述了用 GitHub Pages 创建简单个人博客的步骤，写 markdown 文件即可动态生成博客文章。
 
 ## 参考
 
@@ -47,16 +49,36 @@ author: SURFSKY
 如果对网站的布局和样式不满意，可参照以下方法调整网站
 
 - 在样式选择页面，下载样式网站，解压到你的库。
-    ![](down.png)
+    ![](/raw/master/down.png)
 - 其主要内容如下
-    ![](themefiles.png)
-    - /_layouts    布局
-    - /_sass       样式
-    - /assets      资源
-    - /docs        文档
-    - /script      脚本
-    - _config.yml  配置
-    - index.md     首页
+    ![](/raw/master/themefiles.png)
+
+.
+├── _config.yml
+├── _data
+│   └── members.yml
+├── _drafts
+│   ├── begin-with-the-crazy-ideas.md
+│   └── on-simplicity-in-technology.md
+├── _includes
+│   ├── footer.html
+│   └── header.html
+├── _layouts
+│   ├── default.html
+│   └── post.html
+├── _posts
+│   ├── 2007-10-29-why-every-programmer-should-play-nethack.md
+│   └── 2009-04-26-barcamp-boston-4-roundup.md
+├── _sass
+│   ├── _base.scss
+│   └── _layout.scss
+├── _site
+├── .jekyll-metadata
+├── - _config.yml       配置
+└── - index.md          首页
+
+    参考：https://jekyllrb.com/docs/structure/
+
 - 若有需要，可在_config.yml 中自定义参数
     ```
     title: Architect theme
@@ -238,3 +260,9 @@ _posts 目录下的md文件列表将被解析为
 
 
 ```
+## 5. 备注
+
+作为简单的免费的静态网站，一些常见的博客功能是木有的
+
+- 评论、排序、分页
+- 博文的图片路径如何指定？
