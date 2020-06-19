@@ -1,12 +1,18 @@
 surfsky.github.io
 ================================
-My personal blog in github. You can visit it at here: https://surfsky.github.io
+My personal blog in github. You can visit it at here: <https://surfsky.github.io>
 
 
 Posts
 ================================
 
-<https://surfsky.github.io/blog>
+<https://surfsky.github.io/post>
+
+
+About
+================================
+
+<https://surfsky.github.io/about>
 
 
 Remark
