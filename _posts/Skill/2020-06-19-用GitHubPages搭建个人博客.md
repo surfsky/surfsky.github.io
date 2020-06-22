@@ -9,6 +9,7 @@ title: 用 GitHub Pages 创建个人博客
 
 > https://zhuanlan.zhihu.com/p/51240503
 > https://blog.csdn.net/kkwant/article/details/81001120
+> 用 Hexo 搭建 https://zhuanlan.zhihu.com/p/60578464
 
 
 ## 1. 基础步骤
@@ -127,12 +128,18 @@ title: 用 GitHub Pages 创建个人博客
 
 对应的md文件顶部如下
 
+    ``` yml
     ---
     title: Blog
     author: ABC
     date: 2020-01-01
+    categories:
+        - Diary
+    tags:
+        - PS3
+        - Games
     ---
-
+    ```
 
 
 ### 4.3 帖子变量
