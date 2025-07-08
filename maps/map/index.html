@@ -4,19 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="script-src * 'unsafe-inline' 'unsafe-eval' blob:; worker-src 'self' blob: data:; child-src 'self' blob: data:;">
-    <title>RAD MapDesigner</title>
+    <title>RapidMapDesigner</title>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.3/mapbox-gl-geocoder.min.js"></script>
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.3/mapbox-gl-geocoder.css" type="text/css">
-  <script type="module" crossorigin src="../assets/map-DzHHstxU.js"></script>
-  <link rel="stylesheet" crossorigin href="../assets/map-D5c2f9gk.css">
+  <script type="module" crossorigin src="../assets/map-BoGZnFhc.js"></script>
+  <link rel="stylesheet" crossorigin href="../assets/map-IKq2Yd9U.css">
 </head>
 <body>
     <!-- 地图容器 -->
     <div id="map"></div>
+    
+    <!-- 图层切换面板 -->
+    <div id="layer-menu">
+        <input id="streets-v12" type="radio" name="rtoggle" value="streets" checked="checked">
+        <label for="streets-v12">街道</label>
+        <input id="satellite-streets-v12" type="radio" name="rtoggle" value="satellite-streets">
+        <label for="satellite-streets-v12">卫星街道</label>
+        <input id="light-v11" type="radio" name="rtoggle" value="light">
+        <label for="light-v11">浅色</label>
+        <input id="dark-v11" type="radio" name="rtoggle" value="dark">
+        <label for="dark-v11">深色</label>
+        <input id="outdoors-v12" type="radio" name="rtoggle" value="outdoors">
+        <label for="outdoors-v12">户外</label>
+        <input id="terrain-v12" type="radio" name="rtoggle" value="terrain">
+        <label for="terrain-v12">地形</label>
+    </div>
     
     <!-- 坐标显示现在由CoordinatesControl控件处理 -->
     
@@ -47,7 +63,12 @@
     <!-- 左侧点位列表 -->
     <div class="points-panel">
         <div class="points-header">
-            📍 点位 (<span id="points-count">0</span>)
+            <div class="points-header-left">
+                📍 点位 (<span id="points-count">0</span>)
+            </div>
+            <div class="points-header-right" id="points-header-actions" style="display: none;">
+                <button class="add-point-btn" id="add-point-btn" onclick="window.startAddingPoint()" title="新增点位">+</button>
+            </div>
         </div>
         <!-- 类别筛选下拉框 -->
         <div class="category-filter">
@@ -69,12 +90,12 @@
         </div>
         <div class="detail-toolbar" id="detail-toolbar" style="display: none;">
             <div class="toolbar-left">
-                <button class="toggle-btn active" id="preview-btn" onclick="toggleView('preview')"></button>
-                <button class="toggle-btn" id="edit-btn" onclick="toggleView('edit')"></button>
+                <button class="toggle-btn active" id="preview-btn" title="返回">↩</button>
+                <button class="toggle-btn" id="edit-btn" title="编辑">✏</button>
             </div>
             <div class="toolbar-right">
-                <button class="toolbar-btn save" onclick="savePoint()" title="保存" id="save-btn"></button>
-                <button class="toolbar-btn delete" onclick="deletePoint()" title="删除" id="delete-btn"></button>
+                <button class="toolbar-btn save" title="保存" id="save-btn">💾</button>
+                <button class="toolbar-btn delete" title="删除" id="delete-btn">🗑</button>
             </div>
         </div>
         <div class="detail-content" id="detail-content">
