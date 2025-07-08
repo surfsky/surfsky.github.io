@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="script-src * 'unsafe-inline' 'unsafe-eval' blob:; worker-src 'self' blob: data:; child-src 'self' blob: data:;">
+    <title>RAD MapDesigner</title>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.3/mapbox-gl-geocoder.min.js"></script>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.3/mapbox-gl-geocoder.css" type="text/css">
+  <script type="module" crossorigin src="../assets/map-C2U4QEGt.js"></script>
+  <link rel="stylesheet" crossorigin href="../assets/map-D5c2f9gk.css">
+</head>
+<body>
+    <!-- 地图容器 -->
+    <div id="map"></div>
+    
+    <!-- 坐标显示现在由CoordinatesControl控件处理 -->
+    
+    <!-- 工具栏已移至Mapbox控件 -->
+    
+    <!-- 导入弹窗 -->
+    <div class="import-modal" id="import-modal">
+        <div class="import-modal-content">
+            <h3>导入点位数据</h3>
+            <div class="import-drop-zone" id="import-drop-zone">
+                <input type="file" id="file-input" accept=".xlsx,.xls" style="display: none;" />
+                <div>📄</div>
+                <p>拖拽Excel文件到此处，或点击选择文件</p>
+                <small>支持 .xlsx 和 .xls 格式</small>
+            </div>
+            <div class="import-buttons">
+                <a href="../data/site.xlsx" download class="download-sample">⬇️ 下载示例</a>
+                <div>
+                    <button class="modal-btn secondary" onclick="hideImportModal()">取消</button>
+                    <button class="modal-btn primary" onclick="document.getElementById('file-input').click()">选择文件</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sheet名称标题已由TitleControl控件处理 -->
+    
+    <!-- 左侧点位列表 -->
+    <div class="points-panel">
+        <div class="points-header">
+            📍 点位 (<span id="points-count">0</span>)
+        </div>
+        <!-- 类别筛选下拉框 -->
+        <div class="category-filter">
+            <select id="category-select" onchange="filterPointsByCategory()">
+                <option value="all">全部</option>
+                <!-- 类别选项将在这里动态生成 -->
+            </select>
+        </div>
+        <div class="points-list" id="points-list">
+            <!-- 点位列表将在这里动态生成 -->
+        </div>
+    </div>
+    
+    <!-- 右侧详情面板 -->
+    <div class="detail-panel" id="detail-panel">
+        <div class="detail-header">
+            <h3 id="detail-title">点位详情</h3>
+            <button class="close-btn" onclick="closeDetailPanel()">&times;</button>
+        </div>
+        <div class="detail-toolbar" id="detail-toolbar" style="display: none;">
+            <div class="toolbar-left">
+                <button class="toggle-btn active" id="preview-btn" onclick="toggleView('preview')"></button>
+                <button class="toggle-btn" id="edit-btn" onclick="toggleView('edit')"></button>
+            </div>
+            <div class="toolbar-right">
+                <button class="toolbar-btn save" onclick="savePoint()" title="保存" id="save-btn"></button>
+                <button class="toolbar-btn delete" onclick="deletePoint()" title="删除" id="delete-btn"></button>
+            </div>
+        </div>
+        <div class="detail-content" id="detail-content">
+            <!-- 详情内容将在这里动态生成 -->
+        </div>
+    </div>
+    
+    <!-- Toast 通知容器 -->
+    <div id="toast-container" class="toast-container"></div>
+    
+</body>
+</html>
