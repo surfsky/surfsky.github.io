@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel 查重工具</title>
+    <link rel="manifest" href="../manifest.json">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .header {
+            background: white;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .back-btn {
+            background: #409eff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+        .back-btn:hover {
+            background: #337ecc;
+            transform: translateY(-1px);
+        }
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #303133;
+            margin: 0;
+        }
+        .main-content {
+            background: white;
+            margin: 20px auto;
+            max-width: 1200px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .container {
+            padding: 30px;
+        }
+        .upload-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+        }
+        .options-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+        }
+        .result-section {
+            margin-bottom: 30px;
+        }
+        .options-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        .options-item {
+            flex: 1;
+        }
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 12px 15px;
+            }
+            .header-title {
+                font-size: 18px;
+            }
+            .main-content {
+                margin: 15px;
+                border-radius: 8px;
+            }
+            .container {
+                padding: 20px 15px;
+            }
+            .options-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+        @media (max-width: 480px) {
+            .header-content {
+                padding: 10px 12px;
+            }
+            .header-title {
+                font-size: 16px;
+            }
+            .back-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+            .main-content {
+                margin: 10px;
+            }
+            .container {
+                padding: 15px 10px;
+            }
+        }
+        copyright{
+            color: #999999; 
+            font-size: 12px; 
+            position:fixed;
+            bottom:10px;
+            left:50%; 
+            transform: translateX(-50%); 
+        }
+    </style>
+  <script type="module" crossorigin src="../assets/distinct-D1np5tW2.js"></script>
+  <link rel="modulepreload" crossorigin href="../assets/WebHelper-Cm7Nj4uJ.js">
+  <link rel="stylesheet" crossorigin href="../assets/WebHelper-mtAHe734.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 标题栏 -->
+        <div class="header">
+            <div class="header-content">
+                <a href="#" class="back-btn" title="返回首页" onclick="history.back()">
+                    <span>←</span>
+                </a>
+                <h1 class="header-title">Excel 数据去重</h1>
+            </div>
+        </div>
+        
+        <!-- 主要内容 -->
+        <div class="main-content">
+            <div class="container">
+            
+            <!-- 数据导入区域 -->
+            <h2>1. 导入数据</h2>
+            <div class="upload-section">
+                <el-upload
+                    ref="upload"
+                    :auto-upload="false"
+                    :on-change="handleFileChange"
+                    accept=".xls,.xlsx"
+                    :limit="1">
+                    <el-button type="primary">选择文件</el-button>
+                </el-upload>
+
+                <div v-if="file">
+                    <el-button type="primary" @click="previewData">预览数据</el-button>
+                </div>
+
+                <!-- 预览数据区域 -->
+                <div class="result-section" v-if="previewList.length > 0">
+                    <h3>数据预览 (前10条)</h3>
+                    <el-table :data="previewList" border stripe size="small">
+                        <el-table-column v-for="col in previewColumns" :key="col.prop" :prop="col.prop" :label="col.label" show-overflow-tooltip></el-table-column>
+                    </el-table>
+                </div>
+            </div>
+            
+            <!-- 选项区域 -->
+            <h2 v-if="file">2. 选择选项</h2>
+            <div class="options-section" v-if="file">
+                <div class="options-row">
+                    <div class="options-item">
+                        <label>Sheet:</label>
+                        <el-select v-model="sheet" placeholder="请选择" @change="onSheetChange">
+                            <el-option v-for="item in sheets" :key="item" :label="item" :value="item"></el-option>
+                        </el-select>
+                    </div>
+                    <div class="options-item">
+                        <label>列（可多选）:</label>
+                        <el-select v-model="keyColumns" placeholder="请选择" multiple>
+                            <el-option v-for="item in columns" :key="item" :label="item" :value="item"></el-option>
+                        </el-select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 查重结果区域 -->
+            <div class="result-section" v-if="sheet && keyColumns.length > 0">
+                 <el-button type="success" @click="findDistinctData" :loading="isProcessing">{{ isProcessing ? '处理中...' : '开始查重' }}</el-button>
+            </div>
+            <div class="result-section" v-if="distinctData.length > 0">
+                <h2>3. 查重结果</h2>
+                <el-button type="warning" @click="exportResult">导出结果</el-button>
+                <el-table :data="paginatedResult" border stripe size="small">
+                    <el-table-column v-for="col in resultColumns" :key="col.prop" :prop="col.prop" :label="col.label" show-overflow-tooltip></el-table-column>
+                </el-table>
+                <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="currentPage"
+                    :page-sizes="[10, 20, 50, 100]"
+                    :page-size="pageSize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="distinctData.length">
+                </el-pagination>
+            </div>
+            </div>
+        </div>
+        <copyright>Power by SURFSKY.GITHUB.IO</copyright>
+    </div>
+
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+</body>
+</html>

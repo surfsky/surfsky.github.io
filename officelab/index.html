@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OfficeLab</title>
+    <link rel="manifest" href="./manifest.json">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 0;
+        }
+        .header h1 {
+            font-size: 4em;
+            font-style: bold;
+            color: #fff;
+            margin-bottom: 30px;
+            text-shadow: 0 1px 5px rgba(0,0,0,0.8);
+            font-weight: 300;
+        }
+        .header p {
+            font-size: 1.0em;
+            color: rgba(255,255,255,0.9);
+            line-height: 0.8;
+        }
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+        .tool-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 15px;
+            padding: 30px 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        .tool-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            background: rgba(255,255,255,1);
+        }
+        .tool-card.disabled {
+            cursor: not-allowed;
+            background: rgba(255,255,255,0.6);
+            opacity: 0.7;
+        }
+        .tool-card.disabled::before {
+            background: #ccc;
+        }
+        .tool-card h2 {
+            font-size: 1.6em;
+            margin: 15px 0;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        .tool-card p {
+            color: #7f8c8d;
+            font-size: 1em;
+            line-height: 1.6;
+            margin: 0;
+        }
+        .tool-icon {
+            font-size: 2.5em;
+            margin-bottom: 16px;
+            display: block;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            color: rgba(255,255,255,0.8);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .footer p {
+            margin: 8px 0;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            .header {
+                padding: 30px 0;
+                margin-bottom: 40px;
+            }
+            .header h1 {
+                font-size: 2.2em;
+            }
+            .header p {
+                font-size: 1.1em;
+            }
+            .tool-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .tool-card {
+                padding: 25px 20px;
+            }
+            .tool-card h2 {
+                font-size: 1.4em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>OfficeLab</h1>
+            <p>支持 Excel、Word、PowerPoint等常见办公文件处理</p>
+            <p>浏览器中运行，无需上传到服务器，保障数据安全</p>
+            <p>可保存为 PWA 应用，可离线使用</p>
+        </div>
+
+        <div class="tool-grid">
+            <a href="./comparer/index.html" class="tool-card">
+                <div class="tool-icon">📊</div>
+                <h2>Excel 文档比对</h2>
+                <p>快速比对两个 Excel 工作表中的数据差异，找出新增、删除和修改的记录。</p>
+            </a>
+            <a href="./distinct/index.html" class="tool-card">
+                <div class="tool-icon">🔍</div>
+                <h2>Excel 数据去重</h2>
+                <p>从 Excel 列中提取不重复的数值或文本，轻松去除重复数据。</p>
+            </a>
+            <a href="./group/index.html" class="tool-card">
+                <div class="tool-icon">🔍</div>
+                <h2>Excel 分组统计</h2>
+                <p>根据指定的列对 Excel 数据进行分组统计，快速获取分组后的统计结果。</p>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>Power by SURFSKY.GITHUB.IO</p>
+            <p>All right reserved @2025</p>
+        </div>
+    </div>
+</body>
+</html>
