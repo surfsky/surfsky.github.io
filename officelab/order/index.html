@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excel 查重工具</title>
+    <title>Excel 高级排序工具</title>
     <link rel="manifest" href="../manifest.json">
     <style>
         body {
@@ -64,20 +64,11 @@
         .container {
             padding: 30px;
         }
-        .upload-section {
+        .upload-section, .options-section, .result-section {
             margin-bottom: 30px;
             padding: 20px;
             border: 1px solid #dcdfe6;
             border-radius: 4px;
-        }
-        .options-section {
-            margin-bottom: 30px;
-            padding: 20px;
-            border: 1px solid #dcdfe6;
-            border-radius: 4px;
-        }
-        .result-section {
-            margin-bottom: 30px;
         }
         .options-row {
             display: flex;
@@ -88,43 +79,30 @@
         .options-item {
             flex: 1;
         }
+        .sort-rule {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .sort-rule-buttons {
+            display: flex;
+            gap: 5px;
+        }
         @media (max-width: 768px) {
-            .header-content {
-                padding: 12px 15px;
-            }
-            .header-title {
-                font-size: 18px;
-            }
-            .main-content {
-                margin: 15px;
-                border-radius: 8px;
-            }
-            .container {
-                padding: 20px 15px;
-            }
-            .options-row {
-                flex-direction: column;
-                align-items: stretch;
-            }
+            .header-content { padding: 12px 15px; }
+            .header-title { font-size: 18px; }
+            .main-content { margin: 15px; border-radius: 8px; }
+            .container { padding: 20px 15px; }
+            .options-row, .sort-rule { flex-direction: column; align-items: stretch; }
+            .sort-rule-buttons { justify-content: flex-end; }
         }
         @media (max-width: 480px) {
-            .header-content {
-                padding: 10px 12px;
-            }
-            .header-title {
-                font-size: 16px;
-            }
-            .back-btn {
-                width: 36px;
-                height: 36px;
-                font-size: 14px;
-            }
-            .main-content {
-                margin: 10px;
-            }
-            .container {
-                padding: 15px 10px;
-            }
+            .header-content { padding: 10px 12px; }
+            .header-title { font-size: 16px; }
+            .back-btn { width: 36px; height: 36px; font-size: 14px; }
+            .main-content { margin: 10px; }
+            .container { padding: 15px 10px; }
         }
         copyright{
             color: #999999; 
@@ -135,7 +113,7 @@
             transform: translateX(-50%); 
         }
     </style>
-  <script type="module" crossorigin src="../assets/distinct-0LW0eniv.js"></script>
+  <script type="module" crossorigin src="../assets/order-D7OjQ2o4.js"></script>
   <link rel="modulepreload" crossorigin href="../assets/WebHelper-Cm7Nj4uJ.js">
   <link rel="stylesheet" crossorigin href="../assets/WebHelper-mtAHe734.css">
 </head>
@@ -147,7 +125,7 @@
                 <a href="#" class="back-btn" title="返回首页" onclick="history.back()">
                     <span>←</span>
                 </a>
-                <h1 class="header-title">Excel 数据去重</h1>
+                <h1 class="header-title">Excel 高级排序</h1>
             </div>
         </div>
         
@@ -167,11 +145,20 @@
                     <el-button type="primary">选择文件</el-button>
                 </el-upload>
 
+                <!-- 预览数据区域 -->
+                <div class="options-row" v-if="file">
+                    <div class="options-item">
+                        <label>Sheet:</label>
+                        <el-select v-model="sheet" placeholder="请选择" @change="onSheetChange">
+                            <el-option v-for="item in sheets" :key="item" :label="item" :value="item"></el-option>
+                        </el-select>
+                    </div>
+                </div>
+
                 <div v-if="file">
                     <el-button type="primary" @click="previewData">预览数据</el-button>
                 </div>
 
-                <!-- 预览数据区域 -->
                 <div class="result-section" v-if="previewList.length > 0">
                     <h3>数据预览 (前10条)</h3>
                     <el-table :data="previewList" border stripe size="small">
@@ -181,31 +168,35 @@
             </div>
             
             <!-- 选项区域 -->
-            <h2 v-if="file">2. 选择选项</h2>
+            <h2 v-if="file">2. 设置排序规则</h2>
             <div class="options-section" v-if="file">
-                <div class="options-row">
-                    <div class="options-item">
-                        <label>Sheet:</label>
-                        <el-select v-model="sheet" placeholder="请选择" @change="onSheetChange">
-                            <el-option v-for="item in sheets" :key="item" :label="item" :value="item"></el-option>
-                        </el-select>
-                    </div>
-                    <div class="options-item">
-                        <label>列（可多选）:</label>
-                        <el-select v-model="keyColumns" placeholder="请选择" multiple>
-                            <el-option v-for="item in columns" :key="item" :label="item" :value="item"></el-option>
-                        </el-select>
+                <div v-for="(rule, index) in sortRules" :key="index" class="sort-rule">
+                    <el-select v-model="rule.column" placeholder="选择列">
+                        <el-option v-for="col in columns" :key="col" :label="col" :value="col"></el-option>
+                    </el-select>
+                    <el-select v-model="rule.order" placeholder="排序方式">
+                        <el-option label="升序" value="asc"></el-option>
+                        <el-option label="降序" value="desc"></el-option>
+                        <el-option label="汉字数字顺序" value="custom"></el-option>
+                    </el-select>
+                    <div class="sort-rule-buttons">
+                        <el-button @click="removeRule(index)" type="danger" circle>-</el-button>
+                        <el-button @click="moveRule(index, -1)" :disabled="index === 0" circle>↑</el-button>
+                        <el-button @click="moveRule(index, 1)" :disabled="index === sortRules.length - 1" circle>↓</el-button>
                     </div>
                 </div>
+                <el-button @click="addRule" type="primary">添加排序规则</el-button>
             </div>
 
-            <!-- 查重结果区域 -->
-            <div class="result-section" v-if="sheet && keyColumns.length > 0">
-                 <el-button type="success" @click="findDistinctData" :loading="isProcessing">{{ isProcessing ? '处理中...' : '开始查重' }}</el-button>
+            <!-- 处理区域 -->
+            <div v-if="sortRules.length > 0">
+                 <el-button type="success" @click="sortData" :loading="isProcessing">开始处理</el-button>
+                 <el-button type="warning" @click="exportResult" v-if="sortedData.length > 0">导出结果</el-button>
             </div>
-            <div class="result-section" v-if="distinctData.length > 0">
-                <h2>3. 查重结果</h2>
-                <el-button type="warning" @click="exportResult">导出结果</el-button>
+
+            <!-- 结果区域 -->
+            <div class="result-section" v-if="sortedData.length > 0">
+                <h2>排序结果</h2>
                 <el-table :data="paginatedResult" border stripe size="small">
                     <el-table-column v-for="col in resultColumns" :key="col.prop" :prop="col.prop" :label="col.label" show-overflow-tooltip></el-table-column>
                 </el-table>
@@ -216,14 +207,13 @@
                     :page-sizes="[10, 20, 50, 100]"
                     :page-size="pageSize"
                     layout="total, sizes, prev, pager, next, jumper"
-                    :total="distinctData.length">
+                    :total="sortedData.length">
                 </el-pagination>
             </div>
             </div>
         </div>
-        <copyright>Power by SURFSKY.GITHUB.IO</copyright>
+        <copyright>Copyright © 2024 OfficeLab. All rights reserved.</copyright>
     </div>
-
-    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </body>
 </html>
