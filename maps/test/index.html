@@ -1,0 +1,106 @@
+<html charset="utf-8">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUI</title>
+    <script src="./nocss.js" ></script>
+    <globalStyle></globalStyle>
+</head>
+
+<body onload="setLinks()" padding="0">
+    <row width="100%" height="100%">
+        <column width="300px" height="100%" bgColor="#f0f0f0" padding="20px 0 0 0" >
+          <ul>
+            <li><a target="iframe1"   href="about.html">About</a></li>
+            <li>Theme</li>
+            <ul>
+              <li><a target="iframe1" href="show.html?src=basic-theme">Theme *</a></li>
+              <li><a target="iframe1" href="show.html?src=basic-icon">Icon</a></li>
+              <li><a target="iframe1" href="show.html?src=basic-iconfont">IconFont</a></li>
+              <li><a target="iframe1" href="show.html?src=basic-iconawesome">IconAwesome</a></li>
+            </ul>
+            <li>BasicTag</li>
+            <ul>
+              <li><a target="iframe1" href="show.html?src=basic-rectangle">Rectangle * </a></li>
+              <li><a target="iframe1" href="show.html?src=basic-label">Label * </a></li>
+              <li><a target="iframe1" href="show.html?src=basic-ellipse">Ellipse *</a></li>
+              <li><a target="iframe1" href="show.html?src=basic-image">Image *</a></li>
+              <li><a target="iframe1" href="show.html?src=basic-link">Link *</a></li>
+              <li><a target="iframe1" href="show.html?src=basic-options">Options *</a></li>
+            </ul>
+            <li>Container</li>
+            <ul>
+              <li><a target="iframe1" href="show.html?src=layout-row">Row *</a></li>
+              <li><a target="iframe1" href="show.html?src=layout-column">Column *</a></li>
+              <li><a target="iframe1" href="show.html?src=layout-grid">Grid *</a></li>
+              <li><a target="iframe1" href="show.html?src=layout-container">Container *</a></li>
+            </ul>
+            <li>Position</li>
+            <ul>
+              <li><a target="iframe1" href="show.html?src=position-anchor">Anchor * </a></li>
+              <li><a target="iframe1" href="show.html?src=position-dock">Dock *</a></li>
+              <li><a target="iframe1" href="show.html?src=position-dockSide">Dock side *</a></li>
+              <li><a target="iframe1" href="show.html?src=position-dockChild">Dock child *</a></li>
+            </ul>
+            <li>Popup</li>
+            <ul>
+              <li><a target="iframe1" href="show.html?src=popup-toast">Toast *</a></li>
+              <li><a target="iframe1" href="show.html?src=popup-mask">Mask</a></li>
+              <li><a target="iframe1" href="show.html?src=popup">Popup</a></li>
+              <li><a target="iframe1" href="show.html?src=popup-dialog">Dialog</a></li>
+              <li><a target="iframe1" href="show.html?src=popup-tooltip">Tooltip</a></li>
+            </ul>
+            <li>Form</li>
+            <ul>
+              <li><a target="iframe1" href="show.html?src=form-button">Button *</a></li>
+              <li><a target="iframe1" href="show.html?src=form-buttonIcon">IconButton</a></li>
+              <li><a target="iframe1" href="eshow.html?src=switcher">Switcher</a></li>
+              <li><a target="iframe1" href="eshow.html?src=groupbutton">GroupButton*</a></li>
+              <li><a target="iframe1" href="show.html?src=form">Form</a></li>
+            </ul>
+            <li>Application</li>
+            <ul>
+              <li><a target="iframe1" href="show.html?src=app-portal">Portal(Responsive)</a></li>
+              <li><a target="iframe1" href="show.html?src=app-map">Map</a></li>
+              <li><a target="iframe1" href="show.html?src=app-mobile">Mobile</a></li>
+            </ul>
+          </ul>
+        </column>
+        <column flex="1">
+          <iframe id='iframe1' name="iframe1" src="about.html"           height="60%" style="border:0;"></iframe>
+          <iframe id='iframe2' name="iframe2" src="code.html?src=about.html" flex="1"     border="1px" ></iframe>
+        </column>
+    </row>
+</body>
+</html>
+
+<script>
+    // Let iframe1 to show page, iframe2 to show code.
+    function setLinks(){
+        var iframe1 = document.getElementById('iframe1');
+        var iframe2 = document.getElementById('iframe2');
+        const links = document.getElementsByTagName('a');
+        for (let i = 0; i < links.length; i++) {
+            links[i].addEventListener('click', function (event) {
+                event.preventDefault();
+
+                // iframe1 : xxx.html
+                iframe1.src = this.href;
+
+                // 如果url格式如：show.html?src=layout-row，尝试解析src参数
+                var m = this.href.match(/.*?show\.html\?src=(.*)/);
+                if (m) {
+                    iframe2.src = `code.html?src=${m[1]}`;
+                }
+                else{
+                    // iframe2 : code.html?src=xxx.html&show=all
+                    var page = this.href;
+                    var n = page.lastIndexOf('/');
+                    if (n != -1)
+                        page = page.slice(n+1);
+                    iframe2.src = `code.html?src=${page}`;
+                }
+
+            });
+        }
+    }
+</script>
