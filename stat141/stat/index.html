@@ -79,8 +79,7 @@
             color: #66b1ff;
         }
     </style>
-  <script type="module" crossorigin src="../assets/stat-C3b9kC_r.js"></script>
-  <link rel="modulepreload" crossorigin href="../assets/ExcelTool-DCMHEXgk.js">
+  <script type="module" crossorigin src="../assets/stat-CJA--NRf.js"></script>
 </head>
 <body>
     <div id="app">
@@ -128,7 +127,7 @@
                     </div>
                 </div>
                 
-                <el-button type="success" @click="loadDefaultData" style="margin-top: 10px;">
+                <el-button v-if="false" type="success" @click="loadDefaultData" style="margin-top: 10px;">
                     加载默认数据
                 </el-button>
             </div>
@@ -178,6 +177,9 @@
                 </div>
                 <el-button type="primary" @click="generateReport" :loading="isGenerating" :disabled="isGenerating">
                     {{ isGenerating ? '生成中...' : '生成报表' }}
+                </el-button>
+                <el-button type="info" size="small" @click="showStatInfo" style="margin-left: 8px; background: transparent; border: none; color: #409eff;" title="统计口径说明">
+                    ℹ️
                 </el-button>
             </div>
             
@@ -231,16 +233,16 @@
                             <span class="clickable-cell" @click="showRectifiedHazardList(scope.row, '重大隐患')">{{ scope.row.已整改重大隐患 }}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="检查覆盖率" label="检查覆盖率" width="110" ></el-table-column>
-                    <el-table-column prop="隐患发现率" label="隐患发现率" width="110" ></el-table-column>
-                    <el-table-column prop="重大隐患占比" label="重大隐患占比" width="120" ></el-table-column>
-                    <el-table-column prop="一般隐患整改率" label="一般隐患整改率" width="130" ></el-table-column>
-                    <el-table-column prop="重大隐患整改率" label="重大隐患整改率" width="130" ></el-table-column>
                     <el-table-column prop="逾期隐患数" label="逾期隐患数" width="110">
                         <template #default="scope">
                             <span class="clickable-cell" @click="showOverdueHazardList(scope.row)">{{ scope.row.逾期隐患数 }}</span>
                         </template>
                     </el-table-column>
+                    <el-table-column prop="检查覆盖率" label="检查覆盖率" width="110" ></el-table-column>
+                    <el-table-column prop="隐患发现率" label="隐患发现率" width="110" ></el-table-column>
+                    <el-table-column prop="重大隐患占比" label="重大隐患占比" width="120" ></el-table-column>
+                    <el-table-column prop="一般隐患整改率" label="一般隐患整改率" width="130" ></el-table-column>
+                    <el-table-column prop="重大隐患整改率" label="重大隐患整改率" width="130" ></el-table-column>
                     <el-table-column prop="隐患逾期未整改率" label="隐患逾期未整改率" width="140" ></el-table-column>
                 </el-table>
                 
