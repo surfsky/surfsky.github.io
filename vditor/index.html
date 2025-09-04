@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vditor 编辑器 - 支持保存功能</title>
+    <link rel="stylesheet" href="./vditor/index.css" />
+    <script src="./vditor/index.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .mode-selector {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .mode-selector h3 {
+            margin: 0 0 10px 0;
+            color: #495057;
+            font-size: 16px;
+        }
+        
+        .mode-buttons {
+            display: flex;
+            gap: 10px;
+        }
+                
+        .editor-container {
+            padding: 20px;
+        }
+        
+        #vditor {
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+        }
+        
+        .footer {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+            border-top: 1px solid #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎉 Vditor 编辑器</h1>
+            <p>功能强大的 Markdown 编辑器，支持保存为 Markdown、Word 和 PDF 格式</p>
+        </div>
+        <div class="editor-container">
+            <div id="vditor"></div>
+        </div>
+    </div>
+
+    <script>
+        var vditor;
+        
+        function initVditor(mode) {
+            if (vditor) {
+                vditor.destroy();
+            }
+            
+            var demoContent = "# 欢迎使用 Vditor 编辑器\n\n这是一个功能强大的 Markdown 编辑器演示页面。\n\n## 主要特性\n\n- **所见即所得编辑**：直观的富文本编辑体验\n- **即时渲染**：类似 Typora 的编辑模式\n- **分屏预览**：传统的 Markdown 编辑模式\n- **语法高亮**：支持多种编程语言\n\n## Markdown 语法示例\n\n### 文本格式\n\n**粗体文本** 和 *斜体文本* 以及 ~~删除线~~\n\n### 代码块\n\n```javascript\n// JavaScript 代码示例\nfunction hello(name) {\n    console.log('Hello, ' + name + '!');\n}\n\nhello('Vditor');\n```\n\n### 列表\n\n1. 有序列表项 1\n2. 有序列表项 2\n   - 无序子列表\n   - 另一个子列表项\n\n### 表格\n\n| 功能 | 支持 | 说明 |\n|------|------|------|\n| 所见即所得 | ✅ | 富文本编辑模式 |\n| 即时渲染 | ✅ | 类似 Typora |\n| 分屏预览 | ✅ | 传统编辑模式 |\n\n### 引用\n\n> 这是一个引用块示例。\n> \n> Vditor 是一款优秀的 Markdown 编辑器。\n\n---\n\n💡 **提示**：尝试切换不同的编辑模式来体验各种功能！";
+            
+            vditor = new Vditor('vditor', {
+                height: 800,
+                mode: mode || 'wysiwyg',
+                value: demoContent,
+                placeholder: '开始编写你的 Markdown 内容...',
+                theme: 'classic',
+                icon: 'material',
+                preview: {
+                    theme: {
+                        current: 'light',
+                        path: 'https://cdn.jsdelivr.net/npm/vditor@3.9.7/dist/css/content-theme'
+                    },
+                    hljs: {
+                        enable: true,
+                        lineNumber: true,
+                        style: 'github'
+                    },
+                    math: {
+                        inlineDigit: true,
+                        engine: 'KaTeX'
+                    }
+                },
+                toolbar: [
+                    'emoji',
+                    'headings',
+                    'bold',
+                    'italic',
+                    'strike',
+                    'link',
+                    '|',
+                    'list',
+                    'ordered-list',
+                    'check',
+                    'outdent',
+                    'indent',
+                    '|',
+                    'quote',
+                    'line',
+                    'code',
+                    'inline-code',
+                    'insert-before',
+                    'insert-after',
+                    '|',
+                    'table',
+                    '|',
+                    'undo',
+                    'redo',
+                    '|',
+                    {
+                        name: 'save-markdown',
+                        tipPosition: 's',
+                        tip: '保存为 Markdown 文件',
+                        className: 'vditor-tooltipped vditor-tooltipped--s',
+                        icon: '<svg viewBox="0 0 24 24"><path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" /></svg>',
+                        click: function() {
+                            saveAsMarkdown();
+                        }
+                    },
+                    {
+                        name: 'save-word',
+                        tipPosition: 's',
+                        tip: '保存为 Word 文档',
+                        className: 'vditor-tooltipped vditor-tooltipped--s',
+                        icon: '<svg viewBox="0 0 24 24"><path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M8.93,12.22H10.66L12,16.3L13.34,12.22H15.07L13.27,18.68H10.73L8.93,12.22Z" /></svg>',
+                        click: function() {
+                            saveAsWord();
+                        }
+                    },
+                    {
+                        name: 'save-pdf',
+                        tipPosition: 's',
+                        tip: '保存为 PDF 文件',
+                        className: 'vditor-tooltipped vditor-tooltipped--s',
+                        icon: '<svg viewBox="0 0 24 24"><path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M10.5,10.5C10.5,9.67 9.83,9 9,9H7.5V15H8.5V13H9C9.83,13 10.5,12.33 10.5,11.5V10.5M9.5,11.5C9.5,11.78 9.28,12 9,12H8.5V10H9C9.28,10 9.5,10.22 9.5,10.5V11.5M12.5,9H11.5V15H12.5C13.33,15 14,14.33 14,13.5V10.5C14,9.67 13.33,9 12.5,9M13,13.5C13,13.78 12.78,14 12.5,14H12V10H12.5C12.78,10 13,10.22 13,10.5V13.5M16.5,9H15V15H16V12.5H17V11.5H16V10H17V9H16.5Z" /></svg>',
+                        click: function() {
+                            saveAsPDF();
+                        }
+                    },
+                    '|',
+                    'fullscreen',
+                    'edit-mode',
+                    {
+                        name: 'more',
+                        toolbar: [
+                            'both',
+                            'code-theme',
+                            'content-theme',
+                            'export',
+                            'outline',
+                            'preview',
+                            'devtools'
+                        ]
+                    }
+                ],
+                counter: {
+                    enable: true,
+                    type: 'text'
+                },
+                cache: {
+                    enable: false
+                },
+                after: function() {
+                    console.log('Vditor 初始化完成，当前模式：', mode);
+                }
+            });
+        }
+        
+        // 保存为 Markdown 文件
+        function saveAsMarkdown() {
+            if (!vditor) {
+                alert('编辑器未初始化');
+                return;
+            }
+            
+            var content = vditor.getValue();
+            var blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'document_' + new Date().toISOString().slice(0, 19).replace(/:/g, '-') + '.md';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        // 保存为 Word 文档
+        function saveAsWord() {
+            if (!vditor) {
+                alert('编辑器未初始化');
+                return;
+            }
+            
+            var htmlContent = vditor.getHTML();
+            var wordContent = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Document</title></head><body>' + htmlContent + '</body></html>';
+            var blob = new Blob([wordContent], { type: 'application/msword;charset=utf-8' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'document_' + new Date().toISOString().slice(0, 19).replace(/:/g, '-') + '.doc';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        // 保存为 PDF 文件
+        function saveAsPDF() {
+            if (!vditor) {
+                alert('编辑器未初始化');
+                return;
+            }
+            
+            var htmlContent = vditor.getHTML();
+            var printWindow = window.open('', '_blank');
+            var printContent = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Document PDF</title></head><body>' + htmlContent + '</body></html>';
+            
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            setTimeout(function() {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
+        }
+        
+        // 页面加载完成后初始化编辑器
+        document.addEventListener('DOMContentLoaded', function() {
+            initVditor('wysiwyg');
+        });
+    </script>
+</body>
+</html>
