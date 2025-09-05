@@ -1,0 +1,450 @@
+<html>
+
+<style>
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-align: center;
+    padding: 80px 20px;
+    margin: -20px -20px 60px -20px;
+    /*border-radius: 0 0 30px 30px;*/
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+    opacity: 0.3;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 1s ease-out;
+}
+
+.hero-title {
+    font-size: 3.5em;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    background: linear-gradient(45deg, #fff, #f0f8ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-subtitle {
+    font-size: 1.3em;
+    opacity: 0.95;
+    line-height: 1.8;
+    max-width: 700px;
+    margin: 0 auto 30px;
+    font-weight: 300;
+}
+
+.hero-badges {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.badge {
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    border: 1px solid rgba(255,255,255,0.3);
+    animation: float 3s ease-in-out infinite;
+}
+
+.badge:nth-child(2) { animation-delay: 0.5s; }
+.badge:nth-child(3) { animation-delay: 1s; }
+.badge:nth-child(4) { animation-delay: 1.5s; }
+</style>
+<style>
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 35px;
+    margin: 60px 0;
+    padding: 0 10px;
+}
+
+.project-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 35px 30px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: var(--card-color);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.project-card:hover::before {
+    transform: scaleX(1);
+}
+
+.project-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+}
+
+.project-icon {
+    font-size: 3.5em;
+    margin-bottom: 20px;
+    display: block;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+    transition: transform 0.3s ease;
+}
+
+.project-card:hover .project-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.project-title {
+    color: #2c3e50;
+    margin-bottom: 18px;
+    font-size: 1.5em;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.project-description {
+    color: #6c757d;
+    line-height: 1.7;
+    margin-bottom: 25px;
+    font-size: 1.05em;
+}
+
+.project-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card-color);
+    color: white;
+    padding: 12px 24px;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.95em;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.project-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    filter: brightness(1.1);
+}
+
+.project-link::after {
+    content: '→';
+    transition: transform 0.3s ease;
+}
+
+.project-link:hover::after {
+    transform: translateX(4px);
+}
+
+.card-blue { --card-color: #3498db; }
+.card-red { --card-color: #e74c3c; }
+.card-orange { --card-color: #f39c12; }
+.card-purple { --card-color: #9b59b6; }
+
+@media (max-width: 768px) {
+    .projects-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+        margin: 40px 0;
+    }
+    
+    .project-card {
+        padding: 25px 20px;
+    }
+    
+    .hero-title {
+        font-size: 2.5em;
+    }
+    
+    .hero-section {
+        padding: 60px 20px;
+    }
+}
+</style>
+<style>
+.about-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 25px;
+    padding: 60px 40px;
+    margin: 80px 0;
+    text-align: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.about-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+    animation: float 20s linear infinite;
+}
+
+.about-content {
+    position: relative;
+    z-index: 1;
+}
+
+.about-title {
+    margin-bottom: 30px;
+    font-size: 2.2em;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.about-description {
+    font-size: 1.2em;
+    line-height: 1.9;
+    max-width: 700px;
+    margin: 0 auto 40px;
+    opacity: 0.95;
+    font-weight: 300;
+}
+
+.contact-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+}
+
+.contact-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 15px 30px;
+    text-decoration: none;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 1.05em;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+.contact-btn:hover {
+    background: rgba(255,255,255,0.25);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    border-color: rgba(255,255,255,0.4);
+}
+
+@media (max-width: 768px) {
+    .about-section {
+        padding: 40px 25px;
+        margin: 60px 0;
+    }
+    
+    .about-title {
+        font-size: 1.8em;
+    }
+    
+    .about-description {
+        font-size: 1.1em;
+    }
+    
+    .contact-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+</style>
+<style>
+.footer {
+    text-align: center;
+    margin: 60px 0 40px;
+    padding: 30px 0;
+    border-top: 1px solid #e9ecef;
+    color: #95a5a6;
+    font-size: 0.95em;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.footer-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+</style>
+
+<body>
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">🚀 Welcome to my tech site</h1>
+        <p class="hero-subtitle">
+            I am a full-stack developer with a passion for creating useful and elegant web applications.
+            <br>Focused on front-end technologies, data visualization, and map application development, I connect ideas with reality using code.
+        </p>
+        <div class="hero-badges">
+            <span class="badge">🎯 Web开发</span>
+            <span class="badge">📊 数据可视化</span>
+            <span class="badge">🗺️ 地图应用</span>
+            <span class="badge">⚡ 性能优化</span>
+        </div>
+    </div>
+</div>
+<div class="projects-grid">
+    <!-- Maps项目 -->
+    <div class="project-card card-blue">
+        <div class="project-icon">🗺️</div>
+        <h3 class="project-title">RapidMapDesigner</h3>
+        <p class="project-description">
+            基于Mapbox GL JS的专业地图设计工具，提供直观的可视化界面和强大的数据处理能力。
+            支持标记点管理、批量数据导入、地理编码搜索，让地图创建变得简单高效。
+        </p>
+        <a href="./maps/" class="project-link">探索地图世界</a>
+    </div>
+
+    <!-- OfficeLab项目 -->
+    <div class="project-card card-red">
+        <div class="project-icon">📊</div>
+        <h3 class="project-title">OfficeLab</h3>
+        <p class="project-description">
+            企业级Excel数据处理解决方案，集成去重、统计、排序、关联、比对等核心功能。
+            采用纯前端技术，确保数据隐私安全，让复杂的数据处理工作变得轻松愉快。
+        </p>
+        <a href="./officelab/" class="project-link">开始数据之旅</a>
+    </div>
+
+    <!-- Stat141项目 -->
+    <div class="project-card card-orange">
+        <div class="project-icon">📈</div>
+        <h3 class="project-title">应急消防统计平台</h3>
+        <p class="project-description">
+            专业的应急消防管理统计系统，智能化处理巡查记录和隐患数据。
+            提供可视化报表分析，助力基层管理决策，让安全管理更加科学高效。
+        </p>
+        <a href="./stat141/" class="project-link">查看统计报表</a>
+    </div>
+
+    <!-- Vditor项目 -->
+    <div class="project-card card-purple">
+        <div class="project-icon">✍️</div>
+        <h3 class="project-title">Vditor编辑器</h3>
+        <p class="project-description">
+            现代化的Markdown编辑体验，融合所见即所得与传统编辑的优势。
+            支持实时预览、语法高亮、数学公式，让文档创作变得优雅而高效。
+        </p>
+        <a href="./vditor/" class="project-link">开始写作</a>
+    </div>
+</div>
+
+
+
+<div class="about-section">
+    <div class="about-content">
+        <h2 class="about-title">💫 关于我</h2>
+        <p class="about-description">
+            我是一名充满创造力的全栈开发者，相信技术的力量能够改变世界。
+            专注于构建优雅、高效的Web应用，让复杂的问题变得简单，让枯燥的工作变得有趣。
+            每一行代码都承载着对完美的追求，每一个项目都体现着对用户体验的关注。
+        </p>
+        <div class="contact-buttons">
+            <a href="mailto:surfsky@189.cn" class="contact-btn">
+                <span>📧</span>
+                <span>联系合作</span>
+            </a>
+            <a href="https://github.com/surfsky" class="contact-btn">
+                <span>🚀</span>
+                <span>GitHub</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="footer">
+    <div class="footer-content">
+        <div class="footer-item">
+            <span>©</span>
+            <span>2025 SURFSKY.GITHUB.IO</span>
+        </div>
+        <div class="footer-item">
+            <span>🎯</span>
+            <span>开源免费使用</span>
+        </div>
+        <div class="footer-item">
+            <span>💝</span>
+            <span>用心创造价值</span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
