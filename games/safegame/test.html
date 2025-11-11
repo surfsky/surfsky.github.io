@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片缩放测试</title>
+    <script src="lib/phaser.min.js"></script>
+    <script type="module">
+        import { TestImage } from './src/tests/TestImage.js';
+
+        const config = {
+            type: Phaser.AUTO,
+            width: window.innerWidth,
+            height: window.innerHeight,
+            backgroundColor: '#333333',
+            scene: TestImage
+        };
+
+        new Phaser.Game(config);
+    </script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #333;
+        }
+    </style>
+</head>
+<body>
+</body>
+</html>

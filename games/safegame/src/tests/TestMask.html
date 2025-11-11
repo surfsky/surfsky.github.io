@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phaser Hollow Mask Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+        }
+        #gameContainer {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer"></div>
+
+    <script>
+        // 创建游戏实例
+        const config = {
+            type: Phaser.AUTO,
+            width: 800,
+            height: 600,
+            parent: 'gameContainer',
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            }
+        };
+
+        const game = new Phaser.Game(config);
+
+        function preload() {
+            // 加载示例背景图片
+            this.load.image('background', 'https://picsum.photos/800/600');
+        }
+
+        function create() {
+            // 添加背景图片
+            const background = this.add.image(400, 300, 'background');
+            
+            const gray = this.add.graphics();
+            gray.fillStyle(0x000000, 0.5);
+            gray.fillRect(0, 0, 800, 600);
+            gray.setBlendMode(Phaser.BlendModes.MULTIPLY);
+
+            // 创建一个图形对象用于遮罩
+            const maskGraphics = this.make.graphics();
+            maskGraphics.fillStyle(0xffffff);
+            maskGraphics.fillCircle(400, 300, 150);
+            const mask = maskGraphics.createGeometryMask();
+            mask.setInvertAlpha();  // 反向
+            
+            // 应用遮罩到背景图片
+            //background.setMask(mask);
+            gray.setMask(mask);
+            
+            /*
+            // 添加交互 - 鼠标移动时空心区域跟随鼠标
+            this.input.on('pointermove', (pointer) => {
+                // 清除之前的图形
+                maskGraphics.clear();
+                
+                // 重新绘制遮罩（矩形 + 圆形空心区域）
+                maskGraphics.fillStyle(0x000000);
+                maskGraphics.fillRect(0, 0, 800, 600);
+                
+                maskGraphics.fillStyle(0xffffff);
+                maskGraphics.fillCircle(pointer.x, pointer.y, 150);
+                
+                // 更新遮罩
+                mask.updateFromGraphics();
+                background.setMask(mask);
+            });
+            */
+            
+            // 添加说明文本
+            this.add.text(400, 550, 'Move mouse to control the mask', {
+                font: '16px Arial',
+                fill: '#ffffff'
+            }).setOrigin(0.5);
+        }
+
+        function update() {
+            // 游戏循环更新
+        }
+    </script>
+</body>
+</html>

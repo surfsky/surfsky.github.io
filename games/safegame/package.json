@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "obfuscate": "javascript-obfuscator ./src --output ./dist",
+    "obfuscate2": "npx javascript-obfuscator ./src --output ./dist"
+  },
+  "devDependencies": {
+    "javascript-obfuscator": "^4.1.1",
+    "typescript": "^5.7.3",
+    "webpack-obfuscator": "^3.5.1"
+  },
+  "dependencies": {
+    "phaser": "^3.88.2"
+  }
+}

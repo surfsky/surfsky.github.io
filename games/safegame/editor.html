@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>关卡配置器</title>
+    <style>
+        body { margin: 20px; font-family: Arial; }
+        .container {
+            display: flex;
+            gap: 20px;
+            height: calc(100vh - 40px);
+            padding: 20px;
+        }
+        
+        .left-panel {
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .config-section {
+            margin-bottom: 20px;
+        }
+        
+        .spot-list {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+        }
+        
+        .spot-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fff;
+        }
+        
+        .spot-item.selected {
+            background: #e6f3ff;
+            border-color: #1890ff;
+        }
+        
+        .spot-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .spot-desc {
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .spot-law {
+            font-size: 0.9em;
+            color: #888;
+            border-left: 3px solid #1890ff;
+            padding-left: 8px;
+            margin: 5px 0;
+        }
+        
+        .right-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .canvas-container {
+            flex: 1;
+            position: relative;
+            border: 2px dashed #ccc;
+            overflow: hidden;
+        }
+        
+        canvas {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <h3>关卡配置</h3>
+            <div class="form-group">
+                <label>关卡名称：</label>
+                <input type="text" id="levelName">
+            </div>
+            <div class="form-group">
+                <label>时间限制(秒)：</label>
+                <input type="number" id="timeLimit" value="120">
+            </div>
+            <div class="form-group">
+                <label>场景图片：</label>
+                <input type="file" id="sceneImage" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label>三星时间(秒)：</label>
+                <input type="number" id="threeStarTime" value="45">
+            </div>
+            <div class="form-group">
+                <label>二星时间(秒)：</label>
+                <input type="number" id="twoStarTime" value="75">
+            </div>
+            <hr>
+            <h3>目标点列表</h3>
+            <div id="spotList" class="spot-list"></div>
+            <button onclick="saveLevel()">保存关卡</button>
+        </div>
+        <div class="right-panel">
+            <h3>场景编辑</h3>
+            <p>点击图片添加目标点，拖动可调整位置</p>
+            <div class="canvas-container">
+                <canvas id="editor"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="editModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+        background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000;">
+        <h3>编辑目标点</h3>
+        <div class="form-group">
+            <label>名称：</label>
+            <input type="text" id="editName" style="width: 100%; margin-bottom: 10px;">
+        </div>
+        <div class="form-group">
+            <label>详细描述：</label>
+            <textarea id="editDesc" rows="3" style="width: 100%; margin-bottom: 10px;"></textarea>
+        </div>
+        <div class="form-group">
+            <label>相关法律法规：</label>
+            <textarea id="editLaw" rows="3" style="width: 100%; margin-bottom: 10px;"></textarea>
+        </div>
+        <button onclick="saveSpotEdit()">保存</button>
+        <button onclick="closeEditModal()">取消</button>
+    </div>
+    <div id="modalOverlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+        background: rgba(0,0,0,0.5); z-index: 999;"></div>
+
+    <script>
+        let canvas, ctx;
+        let image = null;
+        let spots = [];
+        let selectedSpot = null;
+        let isDragging = false;
+        let isResizing = false;
+        let dragStartPos = null;
+        let resizeHandle = null;
+
+        function init() {
+            canvas = document.getElementById('editor');
+            ctx = canvas.getContext('2d');
+            
+            // 设置画布初始大小
+            canvas.width = 800;  // 默认宽度
+            canvas.height = 600; // 默认高度
+
+            document.getElementById('sceneImage').onchange = function(e) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    image = new Image();
+                    image.onload = function() {
+                        // 计算缩放比例，使图片适应画布
+                        const containerWidth = canvas.parentElement.clientWidth;
+                        const containerHeight = canvas.parentElement.clientHeight;
+                        const scaleWidth = containerWidth / image.width;
+                        const scaleHeight = containerHeight / image.height;
+                        imageScale = Math.min(scaleWidth, scaleHeight, 1); // 不超过原始大小
+
+                        // 设置画布大小为缩放后的尺寸
+                        canvas.width = image.width * imageScale;
+                        canvas.height = image.height * imageScale;
+                        
+                        draw();
+                    };
+                    image.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            };
+
+            // 修改点击事件处理
+            canvas.onclick = function(e) {
+                if (!image) return; // 如果没有图片，不处理点击
+
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = (e.clientX - rect.left) / canvas.width;
+                const mouseY = (e.clientY - rect.top) / canvas.height;
+
+                // 检查是否在调整大小或拖动
+                if (!isDragging && !isResizing) {
+                    // 检查是否点击了现有点位
+                    let clicked = false;
+                    spots.forEach((spot, index) => {
+                        const distance = Math.hypot(mouseX - spot.x, mouseY - spot.y);
+                        if (distance < spot.radius) {
+                            selectedSpot = index;
+                            clicked = true;
+                        }
+                    });
+
+                    // 如果没有点击现有点位，创建新点位
+                    if (!clicked) {
+                        showAddSpotModal(mouseX, mouseY);
+                    }
+                    draw();
+                }
+            };
+
+            canvas.onmousedown = startDrag;
+            canvas.onmousemove = handleDrag;
+            canvas.onmouseup = endDrag;
+            canvas.onmouseleave = endDrag;
+        }
+
+        function showAddSpotModal(x, y) {
+            const modal = document.getElementById('editModal');
+            editingSpotIndex = -1; // 表示新建
+            
+            modal.innerHTML = `
+                <h3>添加目标点</h3>
+                <div class="form-group">
+                    <label>名称：</label>
+                    <input type="text" id="editName" style="width: 100%;">
+                </div>
+                <div class="form-group">
+                    <label>详细描述：</label>
+                    <textarea id="editDesc" rows="3" style="width: 100%;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>相关法律法规：</label>
+                    <textarea id="editLaw" rows="3" style="width: 100%;"></textarea>
+                </div>
+                <div class="button-group">
+                    <button onclick="saveNewSpot(${x}, ${y})">保存</button>
+                    <button onclick="closeEditModal()">取消</button>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+            document.getElementById('modalOverlay').style.display = 'block';
+        }
+
+        function saveNewSpot(x, y) {
+            const name = document.getElementById('editName').value;
+            const desc = document.getElementById('editDesc').value;
+            const law = document.getElementById('editLaw').value;
+            
+            if (name) {
+                spots.push({
+                    name: name,
+                    desc: desc,
+                    law: law,
+                    x: x,
+                    y: y,
+                    radius: 0.05 // 默认半径
+                });
+                updateSpotList();
+                draw();
+            }
+            
+            closeEditModal();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (image) {
+                // 绘制缩放后的图片
+                ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+                
+                // 绘制所有目标点
+                spots.forEach((spot, index) => {
+                    const isSelected = selectedSpot === index;
+                    
+                    // 计算实际像素位置
+                    const pixelX = spot.x * canvas.width;
+                    const pixelY = spot.y * canvas.height;
+                    const pixelRadius = spot.radius * canvas.width;
+                    
+                    // 绘制圆形区域
+                    ctx.beginPath();
+                    ctx.arc(pixelX, pixelY, pixelRadius, 0, Math.PI * 2);
+                    ctx.fillStyle = isSelected ? 'rgba(255, 0, 0, 0.3)' : 'rgba(255, 255, 0, 0.3)';
+                    ctx.strokeStyle = isSelected ? 'red' : 'yellow';
+                    ctx.lineWidth = 2;
+                    ctx.fill();
+                    ctx.stroke();
+                    
+                    // 如果被选中，绘制控制点
+                    if (isSelected) {
+                        drawResizeHandles(pixelX, pixelY, pixelRadius);
+                    }
+                });
+            }
+        }
+
+        function drawResizeHandles(x, y, radius) {
+            const handleSize = 8;
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 2;
+
+            // 绘制四个控制点
+            const handles = [
+                { x: x, y: y - radius }, // 上
+                { x: x + radius, y: y }, // 右
+                { x: x, y: y + radius }, // 下
+                { x: x - radius, y: y }  // 左
+            ];
+
+            handles.forEach(handle => {
+                ctx.beginPath();
+                ctx.rect(handle.x - handleSize/2, handle.y - handleSize/2, handleSize, handleSize);
+                ctx.fill();
+                ctx.stroke();
+            });
+        }
+
+        function startDrag(e) {
+            if (!image) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = (e.clientX - rect.left) / canvas.width;
+            const mouseY = (e.clientY - rect.top) / canvas.height;
+            dragStartPos = { x: mouseX, y: mouseY };
+
+            // 首先检查是否点击了控制点
+            if (selectedSpot !== null) {
+                const spot = spots[selectedSpot];
+                const pixelX = spot.x * canvas.width;
+                const pixelY = spot.y * canvas.height;
+                const pixelRadius = spot.radius * canvas.width;
+
+                // 检查四个控制点
+                const handles = [
+                    { x: pixelX, y: pixelY - pixelRadius }, // 上
+                    { x: pixelX + pixelRadius, y: pixelY }, // 右
+                    { x: pixelX, y: pixelY + pixelRadius }, // 下
+                    { x: pixelX - pixelRadius, y: pixelY }  // 左
+                ];
+
+                for (let i = 0; i < handles.length; i++) {
+                    const handle = handles[i];
+                    const handleX = handle.x / canvas.width;
+                    const handleY = handle.y / canvas.height;
+                    if (Math.hypot(mouseX - handleX, mouseY - handleY) < 0.02) {
+                        isResizing = true;
+                        resizeHandle = i;
+                        return;
+                    }
+                }
+            }
+
+            // 检查是否点击了现有点位
+            spots.forEach((spot, index) => {
+                if (Math.hypot(mouseX - spot.x, mouseY - spot.y) < spot.radius) {
+                    selectedSpot = index;
+                    isDragging = true;
+                }
+            });
+        }
+
+        function handleDrag(e) {
+            if (!isDragging && !isResizing) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = (e.clientX - rect.left) / canvas.width;
+            const mouseY = (e.clientY - rect.top) / canvas.height;
+
+            if (isDragging && selectedSpot !== null) {
+                // 移动点位
+                const dx = mouseX - dragStartPos.x;
+                const dy = mouseY - dragStartPos.y;
+                
+                spots[selectedSpot].x = Math.max(0, Math.min(1, spots[selectedSpot].x + dx));
+                spots[selectedSpot].y = Math.max(0, Math.min(1, spots[selectedSpot].y + dy));
+                
+                dragStartPos = { x: mouseX, y: mouseY };
+            } else if (isResizing && selectedSpot !== null) {
+                // 调整大小
+                const spot = spots[selectedSpot];
+                const dx = mouseX - spot.x;
+                const dy = mouseY - spot.y;
+                
+                // 根据不同控制点计算新半径
+                let newRadius;
+                switch (resizeHandle) {
+                    case 0: // 上
+                        newRadius = Math.abs(dy);
+                        break;
+                    case 1: // 右
+                        newRadius = Math.abs(dx);
+                        break;
+                    case 2: // 下
+                        newRadius = Math.abs(dy);
+                        break;
+                    case 3: // 左
+                        newRadius = Math.abs(dx);
+                        break;
+                }
+                
+                // 限制半径范围
+                spots[selectedSpot].radius = Math.max(0.02, Math.min(0.2, newRadius));
+            }
+
+            draw();
+        }
+
+        function endDrag() {
+            isDragging = false;
+            isResizing = false;
+            dragStartPos = null;
+            resizeHandle = null;
+            updateSpotList();
+        }
+
+        function updateSpotList() {
+            const list = document.getElementById('spotList');
+            list.innerHTML = spots.map((spot, index) => `
+                <div class="spot-item ${selectedSpot === index ? 'selected' : ''}" 
+                     onclick="highlightSpot(${index})">
+                    <div class="spot-name">${spot.name || '未命名'}</div>
+                    <div class="spot-desc">${spot.desc || ''}</div>
+                    ${spot.law ? `<div class="spot-law">${spot.law}</div>` : ''}
+                    <div class="button-group">
+                        <button onclick="editSpot(${index}, event)">编辑</button>
+                        <button onclick="removeSpot(${index}, event)">删除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function highlightSpot(index) {
+            selectedSpot = index;
+            updateSpotList();
+            draw();
+        }
+
+        function editSpot(index, event) {
+            event.stopPropagation();
+            editingSpotIndex = index;
+            const spot = spots[index];
+            
+            document.getElementById('editModal').innerHTML = `
+                <h3>编辑目标点</h3>
+                <div class="form-group">
+                    <label>名称：</label>
+                    <input type="text" id="editName" value="${spot.name || ''}" style="width: 100%;">
+                </div>
+                <div class="form-group">
+                    <label>详细描述：</label>
+                    <textarea id="editDesc" rows="3" style="width: 100%;">${spot.desc || ''}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>相关法律法规：</label>
+                    <textarea id="editLaw" rows="3" style="width: 100%;">${spot.law || ''}</textarea>
+                </div>
+                <div class="button-group">
+                    <button onclick="saveSpotEdit()">保存</button>
+                    <button onclick="closeEditModal()">取消</button>
+                </div>
+            `;
+            
+            document.getElementById('editModal').style.display = 'block';
+            document.getElementById('modalOverlay').style.display = 'block';
+        }
+
+        function saveSpotEdit() {
+            const spot = spots[editingSpotIndex];
+            spot.name = document.getElementById('editName').value;
+            spot.desc = document.getElementById('editDesc').value;
+            spot.law = document.getElementById('editLaw').value;
+            
+            closeEditModal();
+            updateSpotList();
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            document.getElementById('modalOverlay').style.display = 'none';
+            editingSpotIndex = null;
+        }
+
+        function removeSpot(index, event) {
+            event.stopPropagation(); // 防止触发highlightSpot
+            spots.splice(index, 1);
+            if (selectedSpot === index) {
+                selectedSpot = null;
+            }
+            updateSpotList();
+            draw();
+        }
+
+        // 保存关卡配置
+        function saveLevel() {
+            const levelConfig = {
+                name: document.getElementById('levelName').value,
+                timeLimit: parseInt(document.getElementById('timeLimit').value),
+                starTimes: {
+                    three: parseInt(document.getElementById('threeStarTime').value),
+                    two: parseInt(document.getElementById('twoStarTime').value)
+                },
+                spots: spots
+            };
+
+            // 创建并下载配置文件
+            const blob = new Blob([JSON.stringify(levelConfig, null, 2)], 
+                { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${levelConfig.name || 'level'}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        init();
+    </script>
+</body>
+</html> 

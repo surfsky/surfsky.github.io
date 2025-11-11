@@ -1,0 +1,17 @@
+[
+  {"levelId": "level1", "name": "灭火器安全检查",   "type": "game", "demoId": "demo1"},
+  {"levelId": "level2", "name": "消防栓安全检查",   "type": "game", "demoId": "demo2"},
+  {"levelId": "level3", "name": "消防通道安全检查", "type": "game", "demoId": "demo3"},
+  {"levelId": "level4", "name": "配电箱安全检查",   "type": "game", "demoId": "demo4"},
+  {"levelId": "level5", "name": "电器电路安全检查", "type": "game", "demoId": "demo5"},
+  {"levelId": "level6", "name": "电动车安全检查",  "type": "game", "demoId": "demo6"},
+  {"levelId": "level7", "name": "车间安全检查",  "type": "game", "demoId": "demo7"},
+
+  {"levelId": "demo1", "name": "灭火器安全检查示例",   "type": "demo"},
+  {"levelId": "demo2", "name": "消防栓安全检查示例",   "type": "demo"},
+  {"levelId": "demo3", "name": "消防通道安全检查示例", "type": "demo"},
+  {"levelId": "demo4", "name": "配电箱安全检查示例",   "type": "demo"},
+  {"levelId": "demo5", "name": "电器电路安全示例",     "type": "demo"},
+  {"levelId": "demo6", "name": "电动车安全检查示例",   "type": "demo"},
+  {"levelId": "demo7", "name": "车间安全检查示例",   "type": "demo"}
+]
