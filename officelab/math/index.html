@@ -105,7 +105,7 @@
             }
         }
     </style>
-  <script type="module" crossorigin src="../assets/math-BkZkNTkH.js"></script>
+  <script type="module" crossorigin src="../assets/math-BVksT6XY.js"></script>
   <link rel="modulepreload" crossorigin href="../assets/index-ks1_NEU5.js">
   <link rel="stylesheet" crossorigin href="../assets/index-mtAHe734.css">
 </head>
@@ -127,6 +127,19 @@
             
             <h2>配置选项</h2>
             <div class="config-section">
+                <!-- 快速选择 -->
+                <div class="config-row">
+                    <div class="config-label">快速选择</div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <el-tag style="cursor: pointer;" @click="quickSelect('add10')">10以内加法</el-tag>
+                        <el-tag style="cursor: pointer;" @click="quickSelect('sub10')">10以内减法</el-tag>
+                        <el-tag style="cursor: pointer;" @click="quickSelect('add20carry')">20以内进位加法</el-tag>
+                        <el-tag style="cursor: pointer;" @click="quickSelect('sub20borrow')">20以内退位减法</el-tag>
+                        <el-tag style="cursor: pointer;" @click="quickSelect('addsub20')">20以内加减法</el-tag>
+                        <el-tag style="cursor: pointer;" @click="quickSelect('mul99')">九九乘法表</el-tag>
+                    </div>
+                </div>
+
                 <!-- 题目数 -->
                 <div class="config-row">
                     <div class="config-label">题目数</div>
@@ -171,7 +184,7 @@
                 <!-- 首数大于次数 -->
                 <div class="config-row">
                     <div class="config-label"></div>
-                    <el-checkbox v-model="config.firstGreaterThanSecond">首数大于次(尾)数</el-checkbox>
+                    <el-checkbox v-model="config.firstGreaterThanSecond">首数大等于次数</el-checkbox>
                 </div>
 
                 <!-- 按钮 -->
